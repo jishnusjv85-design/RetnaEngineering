@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { validDate, validMobile, futureSlot, slots, validateBooking, calendarContent, csvContent } from '../src/lib/shared.js';
+import { decodeImage, cleanBody } from '../server/validation.js';
+const now = new Date('2026-09-12T04:00:00Z');
+test('Indian date rules reject Sunday, invalid date and past time', () => { assert.equal(validDate('2026-09-13',now),false); assert.equal(validDate('2026-09-11',now),false); assert.equal(validDate('2026-02-31',now),false); assert.equal(validDate('2026-09-14',now),true); assert.equal(futureSlot('2026-09-12',slots[0],now),false); assert.equal(futureSlot('2026-09-12',slots[1],now),true); });
+test('Mobile format accepts Indian mobile numbers only', () => { assert.equal(validMobile('9544922507'),true); assert.equal(validMobile('+91 9544922507'),true); for(const bad of ['04952303961','1234567890','954492250','95449225077','']) assert.equal(validMobile(bad),false); });
+test('Required fields and consent are validated', () => { const errors = validateBooking({},now); assert.ok(errors.customer_name); assert.ok(errors.booking_time); assert.ok(errors.consent); assert.ok(errors.car_model); });
+test('Calendar uses actual UTC equivalent of IST appointment and marks tentative', () => { const ics = calendarContent({booking_reference:'RECO-TEST',booking_date:'2026-09-14',booking_time:slots[0],booking_type:'Car Silencer Inspection'}); assert.match(ics,/DTSTART:20260914T040000Z/); assert.match(ics,/DTEND:20260914T050000Z/); assert.match(ics,/STATUS:TENTATIVE/); });
+test('CSV neutralizes spreadsheet formula injection and quotes commas', () => { const csv = csvContent([{name:'=HYPERLINK("bad")',requirement:'hello, RECO'}]); assert.ok(csv.includes('"\'=HYPERLINK(""bad"")"')); assert.ok(csv.includes('"hello, RECO"')); });
+test('Uploads reject SVG, incorrect signatures and oversized files', () => { assert.throws(() => decodeImage({type:'image/svg+xml',data:'PHN2Zz4='})); assert.throws(() => decodeImage({type:'image/png',data:Buffer.from('this is not an image').toString('base64')})); assert.throws(() => decodeImage({type:'image/png',data:'A'.repeat(2800004)})); assert.equal(decodeImage(null),null); });
+test('Server rejects fake consent, invalid request IDs and unexpected products', () => { assert.throws(() => cleanBody({request_id:'nope'},'bookings')); assert.throws(() => cleanBody({request_id:crypto.randomUUID(),consent:'true',required_product:'unverified'},'enquiries')); });
