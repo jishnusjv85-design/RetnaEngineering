@@ -12,6 +12,8 @@ const media = {
   precision: 'https://images.pexels.com/photos/7568414/pexels-photo-7568414.jpeg?auto=compress&cs=tinysrgb&w=1400'
 };
 
+const componentSlugs = ['car-silencers', 'car-mufflers', 'exhaust-pipes', 'tail-pipes'];
+
 export const qualities = [
   [FiTarget, 'Accurate fitment', 'We make car-specific exhaust parts with close attention to the dimensions that affect fitment.'],
   [FiLayers, 'Built for daily use', 'We use suitable materials and careful workmanship to make dependable exhaust components.'],
@@ -38,7 +40,7 @@ export default function Home() { return <>
     </div>
   </section>
 
-  <section className="section container"><Reveal><SectionHeading eyebrow="OUR PRODUCT RANGE" title="Find the exhaust part for your car." link="Explore all products" to="/car-silencers">Browse RECO car silencers, mufflers, pipes and related exhaust components.</SectionHeading></Reveal><div className="category-grid">{categories.slice(0, 4).map((c, i) => <Reveal key={c.name} delay={i * .06}><Link to={`/car-silencers?category=${encodeURIComponent(c.name)}`} className={`category-card category-${i}`}><div className="category-top"><span>0{i + 1} / EXHAUST COMPONENTS</span><FiArrowUpRight/></div><div className="category-statement">{c.short}</div><div><h3>{c.name}</h3><p>{c.detail}</p></div></Link></Reveal>)}</div></section>
+  <section className="section container"><Reveal><SectionHeading eyebrow="OUR PRODUCT RANGE" title="Find the exhaust part for your car." link="Explore all products" to="/car-silencers">Browse RECO car silencers, mufflers, pipes and related exhaust components.</SectionHeading></Reveal><div className="category-grid">{categories.slice(0, 4).map((c, i) => <Reveal key={c.name} delay={i * .06}><Link to={`/exhaust-components/${componentSlugs[i]}`} target="_blank" rel="noopener noreferrer" className={`category-card category-${i}`} aria-label={`Open detailed information about ${c.name} in a new tab`}><div className="category-top"><span>0{i + 1} / EXHAUST COMPONENTS</span><FiArrowUpRight/></div><div className="category-statement">{c.short}</div><div><h3>{c.name}</h3><p>{c.detail}</p><span className="category-learn-more">View details <FiArrowUpRight/></span></div></Link></Reveal>)}</div></section>
 
   <section className="vehicle-band"><div className="vehicle-band-bg" style={{backgroundImage:`linear-gradient(90deg,rgba(8,34,48,.98),rgba(8,34,48,.76),rgba(8,34,48,.25)),url(${media.precision})`}}/><div className="container vehicle-band-content"><Reveal><Eyebrow light>FIND THE RIGHT FIT</Eyebrow><h2>Tell us what car you drive.</h2><p>Share the manufacturer, model, year and fuel type. Our team will help identify the suitable silencer or exhaust component.</p><Button to="/car-models" variant="teal">Find My Car<FiArrowRight/></Button></Reveal><div className="vehicle-band-stat"><strong>1988</strong><span>ESTABLISHED<br/>IN CALICUT</span></div></div></section>
 
