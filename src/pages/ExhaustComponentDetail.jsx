@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { FiArrowLeft, FiArrowUpRight, FiCheckCircle, FiPhone } from 'react-icons/fi';
 import { Button, Eyebrow, BookingCTA } from '../components/UI';
+import './ExhaustComponentDetail.css';
 
 const componentDetails = {
   'car-silencers': {
